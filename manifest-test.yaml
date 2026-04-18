@@ -1,0 +1,79 @@
+# ---
+# Can install via CRDs
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: ingress-nginx-controller-loadbalancer
+#   namespace: ingress-nginx
+# spec:
+#   selector:
+#     app.kubernetes.io/component: controller
+#     app.kubernetes.io/instance: ingress-nginx
+#     app.kubernetes.io/name: ingress-nginx
+#   ports:
+#     - name: http
+#       port: 80
+#       protocol: TCP
+#       targetPort: 80
+#     - name: https
+#       port: 443
+#       protocol: TCP
+#       targetPort: 443
+#   type: LoadBalancer
+# ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx
+  namespace: k8s-demo
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: k8s.dojo
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: healthcheck-rust-svc
+                port:
+                  number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthcheck-rust-svc
+  namespace: k8s-demo
+spec:
+  selector:
+    app: healthcheck-rust-dpm
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthcheck-rust-dpm
+  namespace: k8s-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: healthcheck-rust-dpm
+  template:
+    metadata:
+      labels:
+        app: healthcheck-rust-dpm
+    spec:
+      containers:
+        - image: iyudesu/rust_image:v1.1.0
+          name: healthcheck-rust-app
+          ports:
+            - containerPort: 8080
+          resources: {}
