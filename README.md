@@ -54,3 +54,31 @@ curl -v http://k8s.dojo:32714
 # or 
 curl -H "Host: k8s.dojo" http://192.168.64.2:32714
 ```
+
+### For gateway API using
+1. Install Gateway API CRDs
+```sh
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.0/standard-install.yaml
+```
+2. Install NGINX Gateway Fabric (controller)
+```sh
+kubectl apply --server-side -f https://raw.githubusercontent.com/nginxinc/nginx-gateway-fabric/main/deploy/crds.yaml
+kubectl apply -f https://raw.githubusercontent.com/nginxinc/nginx-gateway-fabric/main/deploy/default/deploy.yaml
+```
+3. Install manifest-test-gateway-api.yaml
+```sh
+kubectl apply -f manifest-test-gateway-api.yaml
+```
+4. Check IP from colima to config in /etc/hosts
+```
+# Ex.
+192.168.64.2    k8s.dojo
+```
+5. Check NodePort by command to see \<port\>:\<node-port\>/TCP (use node-port)
+```sh
+kubectl get svc -A | grep gateway 
+```
+6. We will get url to test on web browser
+```
+http://k8s.dojo:<node-port>
+```

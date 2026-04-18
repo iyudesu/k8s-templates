@@ -21,6 +21,7 @@
 #       targetPort: 443
 #   type: LoadBalancer
 # ---
+# --------------- Ingress -----------------
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -42,6 +43,7 @@ spec:
                 port:
                   number: 80
 ---
+# --------------- Service -----------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -56,6 +58,7 @@ spec:
       targetPort: 8080
   type: ClusterIP
 ---
+# --------------- Deployment -----------------
 apiVersion: apps/v1
 kind: Deployment
 metadata:
