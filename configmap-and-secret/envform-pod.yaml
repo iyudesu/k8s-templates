@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-envfrom
+spec:
+  containers:
+    - name: app
+      image: myapp:latest
+      envFrom:
+        - configMapRef:
+            name: app-config       # APP_ENV, LOG_LEVEL, MAX_CONNECTIONS → ENV
+        - secretRef:
+            name: app-secret       # DB_PASSWORD, API_KEY → ENV
+            optional: false
+        - configMapRef:
+            name: app-config
+            prefix: CFG_           # optional: prefix all keys → CFG_APP_ENV, etc.

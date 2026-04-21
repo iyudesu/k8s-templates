@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-vol-files
+spec:
+  volumes:
+    - name: config-vol
+      configMap:
+        name: app-config
+        items:                        # only mount selected keys
+          - key: app.conf
+            path: app.conf            # relative path inside mountPath
+          - key: nginx.conf
+            path: nginx/nginx.conf    # nest into a sub-dir
+
+    - name: secret-vol
+      secret:
+        secretName: app-secret
+        defaultMode: 0400             # restrict permissions (secrets)
+        items:
+          - key: tls.key
+            path: tls.key
+
+  containers:
+    - name: app
+      image: myapp:latest
+      volumeMounts:
+        # Mount the whole volume to a directory
+        - name: config-vol
+          mountPath: /etc/myapp
+        # /etc/myapp/app.conf
+        # /etc/myapp/nginx/nginx.conf
+
+        # Mount a SINGLE key to a single file path (subPath)
+        - name: config-vol
+          mountPath: /etc/nginx/nginx.conf   # exact file path
+          subPath: nginx/nginx.conf          # must match items[].path above
+
+        - name: secret-vol
+          mountPath: /etc/ssl/tls.key
+          subPath: tls.key
+          readOnly: true
