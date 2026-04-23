@@ -44,7 +44,7 @@ colima list
 ```
 5. Check NodePort by command to see \<port\>:\<node-port\>/TCP (use node-port)
 ```sh
-kubectl get svc -A | grep gateway 
+kubectl get svc -A | grep ingress 
 ```
 6. We will get url to test on web browser
 ```
@@ -86,14 +86,14 @@ kubectl get svc -A | grep gateway
 ```
 6. We will get url to test on web browser
 ```
-http://k8s.dojo:<node-port>
+http://k8s.dojo
 ```
 or test curl
 ```sh
 # Ex.
-curl -v http://k8s.dojo:32714
+curl -v http://k8s.dojo
 # or 
-curl -H "Host: k8s.dojo" http://192.168.64.2:32714
+curl -H "Host: k8s.dojo" http://192.168.64.2
 ```
 
 ### Install configmap/secret
